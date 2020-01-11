@@ -1,0 +1,21 @@
+[package]
+authors = ['Parity Technologies <admin@parity.io>']
+edition = '2018'
+name = 'sm2-workshop-runtime-wasm'
+version = '1.0.0'
+[dependencies.sm2-workshop-runtime]
+default-features = false
+path = '..'
+
+[features]
+default = []
+std = ['sm2-workshop-runtime/std']
+
+[workspace]
+members = []
+
+[lib]
+crate-type = ['cdylib']
+[profile.release]
+lto = true
+panic = 'abort'
