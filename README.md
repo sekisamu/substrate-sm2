@@ -1,25 +1,6 @@
-# Substrate Multisig
+# Substrate Template
 
-A simple workable Demo that shows how to implement a multi signature smart contract in Pallet(Runtime) module.
-
-**Recommend** that **DO NOT** use it in production.
-
-## Description
-It is an example to show that how to completely implement a multi signature wallet using pallet. It includes:
-1. How to generate a random `AccountId` that is impossible to control with a known `secret key`, like a smart contract address
-2. How to make `Call`s on-behalf-of this randomly generated account
-
-Dapp-developer-friendly, as it acts in the same way as the multisig wallet smart contract while implemented in Pallet(Substrate Runtime). 
-
-
-
-### What you can do with it
-1. Use multi-sig wallets as the `stash-controller` pair, it allows multi users to collaborate while it requires no trust
-2. Make decisions within a DAO
-
-## Ready for Hacking
-1. Introduce `score` to better measure each member's power
-2. ...
+A simple out-of-the-box substrate template. Just download and hack.
 
 ## Build
 
