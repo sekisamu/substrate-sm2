@@ -1,0 +1,39 @@
+[package]
+name = "node-template"
+version = "2.0.0-alpha.5"
+authors = ["Anonymous"]
+edition = "2018"
+license = "Unlicense"
+build = "build.rs"
+
+[[bin]]
+name = "node-template"
+
+[dependencies]
+futures = "0.3.4"
+log = "0.4.8"
+structopt = "0.3.8"
+
+sc-cli = { version = "0.8.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sp-core = { version = "2.0.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sc-executor = { version = "0.8.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sc-service = { version = "0.8.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sp-inherents = { version = "2.0.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sc-transaction-pool = { version = "2.0.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sp-transaction-pool = { version = "2.0.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sc-network = { version = "0.8.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sc-consensus-aura = { version = "0.8.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sp-consensus-aura = { version = "0.8.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sp-consensus = { version = "0.8.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sc-finality-grandpa = { version = "0.8.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sp-finality-grandpa = { version = "2.0.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sc-client = { version = "0.8.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sc-client-api = { version = "2.0.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sp-runtime = { version = "2.0.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+sc-basic-authorship = { version = "0.8.0-alpha.5", git = "https://github.com/paritytech/substrate.git" }
+
+node-template-runtime = { version = "2.0.0-alpha.5", path = "../runtime" }
+
+[build-dependencies]
+vergen = "3.0.4"
+build-script-utils = { version = "2.0.0-alpha.5", package = "substrate-build-script-utils", git = "https://github.com/paritytech/substrate.git" }

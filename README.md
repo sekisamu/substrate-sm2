@@ -1,8 +1,27 @@
-# sm2-workshop
+# Substrate Multisig
 
-A new SRML-based Substrate node, ready for hacking.
+A simple workable Demo that shows how to implement a multi signature smart contract in Pallet(Runtime) module.
 
-# Building
+**Recommend** that **DO NOT** use it in production.
+
+## Description
+It is an example to show that how to completely implement a multi signature wallet using pallet. It includes:
+1. How to generate a random `AccountId` that is impossible to control with a known `secret key`, like a smart contract address
+2. How to make `Call`s on-behalf-of this randomly generated account
+
+Dapp-developer-friendly, as it acts in the same way as the multisig wallet smart contract while implemented in Pallet(Substrate Runtime). 
+
+
+
+### What you can do with it
+1. Use multi-sig wallets as the `stash-controller` pair, it allows multi users to collaborate while it requires no trust
+2. Make decisions within a DAO
+
+## Ready for Hacking
+1. Introduce `score` to better measure each member's power
+2. ...
+
+## Build
 
 Install Rust:
 
@@ -10,37 +29,39 @@ Install Rust:
 curl https://sh.rustup.rs -sSf | sh
 ```
 
-Install required tools:
+Build Wasm and native code:
 
 ```bash
-./scripts/init.sh
+cargo build --release
 ```
 
-Build the WebAssembly binary:
+## Run
+
+### Single node development chain
+
+Purge any existing developer chain state:
 
 ```bash
-./scripts/build.sh
+./target/release/node-template purge-chain --dev
 ```
 
-Build all native code:
+Start a development chain with:
 
 ```bash
-cargo build
-```
-
-# Run
-
-You can start a development chain with:
-
-```bash
-cargo run -- --dev
+./target/release/node-template --dev
 ```
 
 Detailed logs may be shown by running the node with the following environment variables set: `RUST_LOG=debug RUST_BACKTRACE=1 cargo run -- --dev`.
 
-If you want to see the multi-node consensus algorithm in action locally, then you can create a local testnet with two validator nodes for Alice and Bob, who are the initial authorities of the genesis chain that have been endowed with testnet units. Give each node a name and expose them so they are listed on the Polkadot [telemetry site](https://telemetry.polkadot.io/#/Local%20Testnet). You'll need two terminal windows open.
+### Multi-node local testnet
 
-We'll start Alice's substrate node first on default TCP port 30333 with her chain database stored locally at `/tmp/alice`. The bootnode ID of her node is `QmQZ8TjTqeDj3ciwr93EJ95hxfDsb9pEYDizUAbWpigtQN`, which is generated from the `--node-key` value that we specify below:
+If you want to see the multi-node consensus algorithm in action locally, then you can create a local testnet with two validator nodes for Alice and Bob, who are the initial authorities of the genesis chain that have been endowed with testnet units.
+
+Optionally, give each node a name and expose them so they are listed on the Polkadot [telemetry site](https://telemetry.polkadot.io/#/Local%20Testnet).
+
+You'll need two terminal windows open.
+
+We'll start Alice's substrate node first on default TCP port 30333 with her chain database stored locally at `/tmp/alice`. The bootnode ID of her node is `QmRpheLN4JWdAnY7HGJfWFNbfkQCb6tFf4vvA6hgjMZKrR`, which is generated from the `--node-key` value that we specify below:
 
 ```bash
 cargo run -- \
@@ -57,7 +78,7 @@ In the second terminal, we'll start Bob's substrate node on a different TCP port
 ```bash
 cargo run -- \
   --base-path /tmp/bob \
-  --bootnodes /ip4/127.0.0.1/tcp/30333/p2p/QmQZ8TjTqeDj3ciwr93EJ95hxfDsb9pEYDizUAbWpigtQN \
+  --bootnodes /ip4/127.0.0.1/tcp/30333/p2p/QmRpheLN4JWdAnY7HGJfWFNbfkQCb6tFf4vvA6hgjMZKrR \
   --chain=local \
   --bob \
   --port 30334 \
