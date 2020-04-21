@@ -54,4 +54,4 @@ Balance transfer success: value: 10000
 ```
 
 ## Thanks
-Many thanks to https://github.com/citahub/libsm
+Many thanks to [CITA](https://github.com/citahub/libsm)
