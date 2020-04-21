@@ -16,6 +16,7 @@
 
 //! A library to **sub**mit e**xt**rinsics to a
 //! [substrate](https://github.com/paritytech/substrate) node via RPC.
+//! A fork of https://github.com/paritytech/substrate-subxt
 
 #![deny(
     bad_style,
