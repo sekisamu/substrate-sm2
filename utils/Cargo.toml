@@ -1,0 +1,17 @@
+[package]
+name = "utils"
+version = "0.1.0"
+authors = ["hammeWang <dsw0602@foxmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-std = "1.5.0"
+env_logger = "0.7"
+wabt = "0.9"
+sp-core = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+substrate-subxt = { package = "subxt", path = "./subxt"}
+frame-system = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+pallet-balances = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+crypto-sm2 = { path = "../primitives/sm2" }

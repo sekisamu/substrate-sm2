@@ -1,0 +1,64 @@
+[package]
+name = "crypto-sm2"
+version = "0.1.0"
+authors = ["hammeWang <dsw0602@foxmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+sp-core = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git", default-features = false }
+libsm = { package = "cryptape-sm", git = "https://github.com/hammeWang/libsm.git", optional = true }
+codec = { package = "parity-scale-codec", version = "1.0.0", default-features = false, features = ["derive"] }
+sp-std = { version = "2.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git" }
+rustc-hex = { version = "2.0.1", default-features = false }
+serde = { version = "1.0.101", optional = true, features = ["derive"] }
+substrate-bip39 = { version = "0.3.1", optional = true }
+tiny-bip39 = { version = "0.6.2", optional = true }
+regex = { version = "1.3.1", optional = true }
+rand = { version = "0.7.2", optional = true }
+lazy_static = { version = "1.4.0", default-features = false, optional = true }
+sp-debug-derive = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sp-storage = { version = "2.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git" }
+sp-runtime-interface = { version = "2.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git" }
+sp-application-crypto = { version = "2.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git" }
+sp-runtime = { version = "2.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git" }
+sp-io = { version = "2.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git" }
+# full_crypto
+hex = { version = "0.4", default-features = false, optional = true }
+blake2-rfc = { version = "0.2.18", default-features = false, optional = true }
+
+[dev-dependencies]
+hex-literal = "0.2.1"
+
+[features]
+default = ["std"]
+std = [
+	"full_crypto",
+	"libsm/std",
+    "sp-core/std",
+    "lazy_static",
+    "codec/std",
+    "sp-std/std",
+    "serde",
+    "rand",
+    "regex",
+    "rustc-hex/std",
+    "substrate-bip39",
+    "tiny-bip39",
+    "sp-debug-derive/std",
+    "sp-storage/std",
+    "hex/std",
+    "blake2-rfc/std",
+    "sp-runtime-interface/std",
+    "sp-application-crypto/std",
+    "sp-runtime/std",
+    "sp-io/std",
+]
+
+
+full_crypto = [
+	"hex",
+	"blake2-rfc",
+	"libsm"
+]

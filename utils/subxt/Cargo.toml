@@ -1,0 +1,37 @@
+[package]
+name = "subxt"
+version = "0.1.0"
+authors = ["hammeWang <dsw0602@foxmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+log = "0.4"
+thiserror = "1.0"
+futures = "0.3"
+jsonrpsee = { version = "0.1", features = ["ws"] }
+num-traits = { version = "0.2", default-features = false }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+url = "2.1"
+codec = { package = "parity-scale-codec", version = "1.2", default-features = false, features = ["derive", "full"] }
+
+frame-metadata = { version = "11.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+frame-support = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sp-runtime = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sp-version = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+pallet-indices = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+hex = "0.4.0"
+sp-rpc = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sp-core = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sp-transaction-pool = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+crypto-sm2 = { path = "../../primitives/sm2" }
+
+[dev-dependencies]
+async-std = "1.5.0"
+env_logger = "0.7"
+wabt = "0.9"
+frame-system = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+pallet-balances = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sp-keyring = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git" }

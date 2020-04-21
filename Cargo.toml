@@ -2,7 +2,10 @@
 members = [
     "node",
     "runtime",
-    "pallets/template"
+    "primitives/sm2",
+    "pallets/template",
+    "utils",
+    "utils/subxt"
 ]
 
 [profile.release]
