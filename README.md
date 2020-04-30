@@ -1,4 +1,4 @@
-# Substrate SM2 DEMO
+# Substrate SM2
 
 substrate-sm2 is a simple SM2 integration for Substrate. With this, you can sign message with SM2 algorithm and submit it into substrate for verifying.
 

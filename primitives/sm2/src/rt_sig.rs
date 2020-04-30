@@ -102,7 +102,7 @@ impl IdentifyAccount for MultiSigner {
 			MultiSigner::Sr25519(who) => <[u8; 32]>::from(who).into(),
 			MultiSigner::Ecdsa(who) => sp_io::hashing::blake2_256(&who.as_ref()[..]).into(),
 			// ugly hacking
-			MultiSigner::Sm2(who) => who.into_b32().into()
+			MultiSigner::Sm2(who) => sp_io::hashing::blake2_256(&who.as_ref()[..]).into(),
 		}
 	}
 }
@@ -185,17 +185,11 @@ impl Verify for MultiSignature {
 				}
 			},
 			(MultiSignature::Sm2(ref sig), who) => {
-				let mut pk_ov = [0u8; 33];
-				let mut pk_od = [0u8; 33];
-				pk_ov[0] = 0x02;
-				pk_ov[1..].copy_from_slice(who.as_ref());
+				let pk = sig.into_sm2_pk();
+				let r = sig.verify(msg.get(), &sm2::Public::from_raw(pk));
+				let eq = &sp_io::hashing::blake2_256(pk.as_ref()) == <dyn AsRef<[u8; 32]>>::as_ref(who);
+				r && eq
 
-				pk_od[0] = 0x03;
-				pk_od[1..].copy_from_slice(who.as_ref());
-				let r0 = sig.verify(msg.get(), &sm2::Public::from_raw(pk_ov));
-				let r1 = sig.verify(msg, &sm2::Public::from_raw(pk_od));
-
-				(r0 ^ r1) || (r0 || r1)
 			}
 		}
 	}

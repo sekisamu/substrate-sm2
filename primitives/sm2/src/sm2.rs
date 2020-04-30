@@ -21,6 +21,7 @@ use sp_core::crypto::{Public as TraitPublic, UncheckedFrom, CryptoType, Derive, 
 use sp_runtime::traits::{Verify, Lazy, IdentifyAccount};
 #[cfg(feature = "full_crypto")]
 use sm2::signature::{Seckey, Pubkey};
+use sp_runtime_interface::pass_by::{PassBy, Codec};
 use crate::io;
 
 
@@ -198,19 +199,20 @@ impl sp_std::hash::Hash for Public {
 	}
 }
 
-/// A signature(a 512-bit value)
+/// A signature
 #[derive(Encode, Decode)]
-pub struct Signature([u8; 64]);
+pub struct Signature([u8; 97]);
 
 
 #[cfg(feature = "std")]
-impl From<sm2::signature::Signature> for Signature {
-	fn from(x: sm2::signature::Signature) -> Signature {
-		let mut buf = [0u8; 64];
-		let r = x.get_r();
-		let s = x.get_s();
+impl From<(sm2::signature::Signature, Public)> for Signature {
+	fn from(x: (sm2::signature::Signature, Public)) -> Signature {
+		let mut buf = [0u8; 97];
+		let r = x.0.get_r();
+		let s = x.0.get_s();
 		buf[0..32].copy_from_slice(&r.to_bytes_be());
 		buf[32..64].copy_from_slice(&s.to_bytes_be());
+		buf[64..97].copy_from_slice(&x.1.as_ref());
 		Signature(buf)
 	}
 }
@@ -219,8 +221,8 @@ impl sp_std::convert::TryFrom<&[u8]> for Signature {
 	type Error = ();
 
 	fn try_from(data: &[u8]) -> Result<Self, Self::Error> {
-		if data.len() == 64 {
-			let mut inner = [0u8; 64];
+		if data.len() == 97 {
+			let mut inner = [0u8; 97];
 			inner.copy_from_slice(data);
 			Ok(Signature(inner))
 		} else {
@@ -249,7 +251,7 @@ impl<'de> Deserialize<'de> for Signature {
 
 impl Clone for Signature {
 	fn clone(&self) -> Self {
-		let mut r = [0u8; 64];
+		let mut r = [0u8; 97];
 		r.copy_from_slice(&self.0[..]);
 		Signature(r)
 	}
@@ -257,7 +259,7 @@ impl Clone for Signature {
 
 impl Default for Signature {
 	fn default() -> Self {
-		Signature([0u8; 64])
+		Signature([0u8; 97])
 	}
 }
 
@@ -269,14 +271,14 @@ impl PartialEq for Signature {
 
 impl Eq for Signature {}
 
-impl From<Signature> for [u8; 64] {
-	fn from(v: Signature) -> [u8; 64] {
+impl From<Signature> for [u8; 97] {
+	fn from(v: Signature) -> [u8; 97] {
 		v.0
 	}
 }
 
-impl AsRef<[u8; 64]> for Signature {
-	fn as_ref(&self) -> &[u8; 64] {
+impl AsRef<[u8; 97]> for Signature {
+	fn as_ref(&self) -> &[u8; 97] {
 		&self.0
 	}
 }
@@ -296,7 +298,7 @@ impl AsMut<[u8]> for Signature {
 #[cfg(feature = "std")]
 impl std::fmt::Debug for Signature {
 	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-		write!(f, "{}", sp_core::hexdisplay::HexDisplay::from(&self.0))
+		write!(f, "{}", sp_core::hexdisplay::HexDisplay::from(&self.0.as_ref()))
 	}
 }
 
@@ -308,23 +310,37 @@ impl sp_std::hash::Hash for Signature {
 }
 
 impl Signature {
-	/// A new instance from the given 64-byte `data`.
+	/// A new instance from the given 97-byte `data`.
 	///
 	/// NOTE: No checking goes on to ensure this is a real signature. Only use it if
 	/// you are certain that the array actually is a signature. GIGO!
-	pub fn from_raw(data: [u8; 64]) -> Signature {
+	pub fn from_raw(data: [u8; 97]) -> Signature {
 		Signature(data)
 	}
 
-	/// A new instance from the given slice that should be 64 bytes long.
+	/// A new instance from the given slice that should be 97 bytes long.
 	///
 	/// NOTE: No checking goes on to ensure this is a real signature. Only use it if
 	/// you are certain that the array actually is a signature. GIGO!
 	pub fn from_slice(data: &[u8]) -> Self {
-		let mut r = [0u8; 64];
+		let mut r = [0u8; 97];
 		r.copy_from_slice(data);
 		Signature(r)
 	}
+
+	pub fn into_sm2_sig(&self) -> [u8; 64] {
+		let mut buf = [0u8; 64];
+		buf.copy_from_slice(&self.0[0..64]);
+		buf
+	}
+
+	pub fn into_sm2_pk(&self) -> [u8; 33] {
+		let mut buf = [0u8; 33];
+		buf.copy_from_slice(&self.0[64..97]);
+		buf
+	}
+
+
 }
 
 
@@ -422,12 +438,14 @@ impl TraitPair for Pair {
 
 	/// Sign a message.
 	fn sign(&self, message: &[u8]) -> Signature {
-		sm2::utils::sign(&message, &self.secret, &self.public).into()
+		let (sig, pk) = sm2::utils::sign(&message, &self.secret, &self.public);
+		Signature::from((sig, Public::from_raw(pk)))
+
 	}
 
 	/// Verify a signature on a message. Returns true if the signature is good.
 	fn verify<M: AsRef<[u8]>>(sig: &Self::Signature, message: M, pubkey: &Self::Public) -> bool {
-		let sm2_sig = sm2::signature::Signature::parse(sig.as_ref());
+		let sm2_sig = sm2::signature::Signature::parse(&sig.into_sm2_sig());
 		let pk = match sm2::utils::parse_pk(pubkey.as_ref()) {
 			Ok(p) => p,
 			Err(_) => return false,
@@ -438,7 +456,7 @@ impl TraitPair for Pair {
 	/// Verify a signature on a message. Returns true if the signature is good.
 	/// actually the same with `verify`
 	fn verify_weak<P: AsRef<[u8]>, M: AsRef<[u8]>>(sig: &[u8], message: M, pubkey: P) -> bool {
-		if sig.len() != 64 { return false }
+		if sig.len() != 97 { return false }
 		Self::verify(&Signature::from_slice(sig.as_ref()), message, &Self::Public::from_slice(pubkey.as_ref()))
 	}
 
@@ -502,6 +520,10 @@ impl Verify for Signature {
 	type Signer = Public;
 	fn verify<L: Lazy<[u8]>>(&self, mut msg: L, signer: &Public) -> bool {
 		let signer = signer.as_ref();
-		io::sca::sm2_verify(self.as_ref(), msg.get(), signer)
+		io::sca::sm2_verify(self, msg.get(), signer)
 	}
+}
+
+impl PassBy for Signature {
+	type PassBy = Codec<Self>;
 }

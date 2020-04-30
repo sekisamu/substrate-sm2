@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 sp-core = { version = "2.0.0-dev", git = "https://github.com/paritytech/substrate.git", default-features = false }
-libsm = { package = "cryptape-sm", git = "https://github.com/hammeWang/libsm.git", optional = true }
+libsm = { package = "cryptape-sm", git = "https://github.com/hammeWang/libsm.git", rev = "a85974c", optional = true }
 codec = { package = "parity-scale-codec", version = "1.0.0", default-features = false, features = ["derive"] }
 sp-std = { version = "2.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git" }
 rustc-hex = { version = "2.0.1", default-features = false }
